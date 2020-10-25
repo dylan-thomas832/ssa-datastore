@@ -1,5 +1,5 @@
+from flask import json, url_for
 import requests
-import json
 
 
 class TestEndPoints:
@@ -9,23 +9,21 @@ class TestEndPoints:
         "ephemeris",
     )
 
-    def testGetRequest(self):
-        response = requests.get("http://127.0.0.1:5000/api/epoch")
+    def testGetRequest(self, client):
+        response = client.get(url_for('api.epochresource'))
         assert response.status_code == 200
 
-    def testEpochPostRequest(self):
+    def testEpochPostRequest(self, client):
         epoch = {
-            "julian_date": 2459144.0
+            "julian_date": 2459144.1
         }
-        response = requests.post("http://127.0.0.1:5000/api/epoch", data=json.dumps(epoch))
-        print(response.text)
+        response = client.post(url_for('api.epochresource'), data=json.dumps(epoch))
         assert response.status_code == 201
 
-    def testPostRequest(self):
+    def testPostRequest(self, client):
         tgt = {
             "unique_id": 11111,
             "name": "TargetSat"
         }
-        response = requests.post("http://127.0.0.1:5000/api/target", data=json.dumps(tgt))
-        print(response)
+        response = client.post(url_for('api.targetresource'), data=json.dumps(tgt))
         assert response.status_code == 201
