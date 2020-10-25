@@ -1,0 +1,12 @@
+{
+    "python.linting.pylintArgs": [
+        "--rcfile==.vscode/.pylintrc",
+    ],
+    "python.linting.flake8Args": [
+        "--config=.vscode/.flake8"
+    ],
+    "files.associations": {
+        ".flake8": "properties",
+        ".pylintrc": "properties"
+    }
+}
