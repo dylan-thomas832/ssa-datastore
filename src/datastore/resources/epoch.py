@@ -2,7 +2,7 @@ import logging
 from flask import request
 from flask.logging import default_handler
 from flask_restful import Resource
-from model import db, Epoch, EpochSchema
+from ..model import db, Epoch, EpochSchema
 
 
 epochs_schema = EpochSchema(many=True)

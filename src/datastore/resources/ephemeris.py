@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from model import db, Ephemeris, EphemerisSchema
+from ..model import db, Ephemeris, EphemerisSchema
 
 
 ephemerides_schema = EphemerisSchema(many=True)

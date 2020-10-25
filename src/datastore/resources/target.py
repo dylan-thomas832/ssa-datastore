@@ -2,7 +2,7 @@ import logging
 from flask import request
 from flask.logging import default_handler
 from flask_restful import Resource
-from model import db, Target, TargetSchema
+from ..model import db, Target, TargetSchema
 
 
 targets_schema = TargetSchema(many=True)
