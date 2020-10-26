@@ -1,47 +1,31 @@
-from flask import current_app as app, request
-from flask_restful import Resource
-from marshmallow import ValidationError
+from . import BaseResource
 from ..model import db, Target, TargetSchema
 
 
-targets_schema = TargetSchema(many=True)
-target_schema = TargetSchema()
+class TargetResource(BaseResource):
 
-
-class TargetResource(Resource):
-
-    def get(self):
-        targets = Target.query.all()
-        app.logger.info("Get request returned {0} results".format(len(targets)))
-        targets = targets_schema.dump(targets)
-        return {'status': 'success', 'data': targets}, 200
+    multi_schema = TargetSchema(many=True)
+    single_schema = TargetSchema()
+    model_type = Target
 
     def post(self):
-        json_data = request.get_json(force=True)
-        if not json_data:
-            return {'message': 'No input data provided'}, 400
+        validated, data = self.validate()
+        if not validated:
+            return data[0], data[1]
 
-        # Validate and deserialize input
-        try:
-            data = target_schema.load(json_data)
-        except ValidationError as error:
-            app.logger.error("Invalid data: {0}".format(error.messages))
-            app.logger.error("Valid data: {0}".format(error.valid_data))
-            return error.messages, 422
-
+        # Deserialize input
+        target, json_data = data[0], data[1]
         # Ensure the entry doesn't already exist in DB
-        target = Target.query.filter_by(name=data['name']).first()
-        if target:
+        target_in_db = Target.query.filter_by(
+            unique_id=json_data['unique_id']
+        ).first()
+        if target_in_db:
             return {'message': 'Target already exists'}, 400
-        target = Target(
-            unique_id=json_data['unique_id'],
-            name=json_data['name'],
-        )
 
         # Commit valid POST to DB
         db.session.add(target)
         db.session.commit()
 
         # Return valid POST result
-        result = target_schema.dump(target)
+        result = self.single_schema.dump(target)
         return { "status": 'success', 'data': result }, 201
