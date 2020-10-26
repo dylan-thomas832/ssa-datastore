@@ -1,5 +1,5 @@
 from flask import Flask
-from marshmallow import Schema, fields, pre_load, validate
+from marshmallow import Schema, fields, validate, post_load
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 
@@ -167,6 +167,10 @@ class TargetSchema(ma.Schema):
     unique_id = fields.Integer(required=True)
     name = fields.String(required=True)
 
+    @post_load
+    def makeTarget(self, data, **kwargs):
+        return Target(**data)
+
 
 class SensorSchema(ma.Schema):
 
@@ -174,6 +178,10 @@ class SensorSchema(ma.Schema):
     unique_id = fields.Integer(required=True)
     name = fields.String(required=True)
     sensor_type = fields.String(required=True)
+
+    @post_load
+    def makeSensor(self, data, **kwargs):
+        return Sensor(**data)
 
 
 class EphemerisSchema(ma.Schema):
@@ -191,6 +199,10 @@ class EphemerisSchema(ma.Schema):
     julian_date = fields.Integer(required=True)
     # timestamp = fields.DateTime(required=True)
 
+    @post_load
+    def makeEphemeris(self, data, **kwargs):
+        return Ephemeris(**data)
+
 
 class ObservationSchema(ma.Schema):
 
@@ -207,9 +219,17 @@ class ObservationSchema(ma.Schema):
     julian_date = fields.Float(required=True)
     # timestamp = fields.DateTime(required=True)
 
+    @post_load
+    def makeObservation(self, data, **kwargs):
+        return Observation(**data)
+
 
 class EpochSchema(ma.Schema):
 
     id = fields.Integer()
     julian_date = fields.Float(required=True)
     # timestamp = fields.DateTime(required=True)
+
+    @post_load
+    def makeEpoch(self, data, **kwargs):
+        return Epoch(**data)
