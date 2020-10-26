@@ -1,5 +1,4 @@
 from flask import json, url_for
-import requests
 
 
 class TestEndPoints:
