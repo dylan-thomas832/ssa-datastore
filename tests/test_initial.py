@@ -1,4 +1,4 @@
-from flask import json, url_for
+from flask import current_app as app, json, url_for
 
 
 class TestEndPoints:
@@ -14,15 +14,25 @@ class TestEndPoints:
 
     def testEpochPostRequest(self, client):
         epoch = {
-            "julian_date": 2459144.1
+            "julian_date": 2459144.3
         }
         response = client.post(url_for('api.epochresource'), data=json.dumps(epoch))
+        app.logger.info(response.data)
         assert response.status_code == 201
 
-    def testPostRequest(self, client):
+    def testEpochBadPostRequest(self, client):
+        epoch = {
+            "julia_date": 2459144.5
+        }
+        response = client.post(url_for('api.epochresource'), data=json.dumps(epoch))
+        app.logger.info(response.data)
+        assert response.status_code == 422
+
+    def testTargetPostRequest(self, client):
         tgt = {
-            "unique_id": 11111,
-            "name": "TargetSat"
+            "unique_id": 11112,
+            "name": "TargetSat1"
         }
         response = client.post(url_for('api.targetresource'), data=json.dumps(tgt))
+        app.logger.info(response.data)
         assert response.status_code == 201
