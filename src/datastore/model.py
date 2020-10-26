@@ -87,7 +87,9 @@ class Ephemeris(db.Model):
     julian_date = db.Column(db.Float, db.ForeignKey('epoch.julian_date'), nullable=False)
     # timestamp = db.Column(db.DateTime, db.ForeignKey('epoch.timestamp'), nullable=False)
 
-    def __init__(self, eci):
+    def __init__(self, julian_date, target_id, eci):
+        self.julian_date = julian_date
+        self.target_id = target_id
         self.pos_x_km = eci[0]
         self.pos_y_km = eci[1]
         self.pos_z_km = eci[2]
@@ -125,11 +127,14 @@ class Observation(db.Model):
     julian_date = db.Column(db.Float, db.ForeignKey('epoch.julian_date'), nullable=False)
     # timestamp = db.Column(db.DateTime(), db.ForeignKey('epoch.timestamp'), nullable=False)
 
-    def __init__(self, azimuth, elevation, range_, range_rate):
-        self.azimuth_rad = azimuth
-        self.elevation_rad = elevation
-        self.range_km = range_
-        self.range_rate_km_p_sec = range_rate
+    def __init__(self, julian_date, sensor_id, target_id, **measurements):
+        self.julian_date = julian_date
+        self.sensor_id = sensor_id
+        self.target_id = target_id
+        self.azimuth_rad = measurements.get('azimuth')
+        self.elevation_rad = measurements.get('elevation')
+        self.range_km = measurements.get('range', None)
+        self.range_rate_km_p_sec = measurements.get('range_rate', None)
 
 
 class Epoch(db.Model):
